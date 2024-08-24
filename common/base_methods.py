@@ -136,6 +136,20 @@ class BasePage:
         wait = WebDriverWait(self.driver, 20)
         return wait.until(EC.presence_of_element_located(locator))
 
+    def wait_for_text_to_be_present_in_element(self, locator, text):
+        """
+        Waits until the specified element is present in the DOM with text.
+
+        Args:
+            locator (tuple): The locator tuple (By.<method>, <value>) for finding the element.
+            text (string): text to be present in element
+
+        Returns:
+            WebElement: The web element present in the DOM with text.
+        """
+        wait = WebDriverWait(self.driver, 20)
+        return wait.until(EC.text_to_be_present_in_element(locator, text))
+
     def execute_script(self, script, *args):
         """
         Executes JavaScript in the context of the current page.
