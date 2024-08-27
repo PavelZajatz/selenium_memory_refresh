@@ -39,6 +39,20 @@ class BasePage:
         element = self.driver.find_element(*locator)
         element.click()
 
+    def get_text(self, locator):
+        """
+        Get text from the specified web element.
+
+        Args:
+            locator (tuple): The locator tuple (By.<method>, <value>) for finding the element.
+
+        Returns:
+            text[string]: text from element.
+        """
+        self.wait_for_element_to_be_present(locator=locator)
+        element = self.driver.find_element(*locator)
+        return element.text
+
     def find_elements(self, locator):
         """
         Finds all web elements matching the given locator.
@@ -50,6 +64,18 @@ class BasePage:
             list[WebElement]: A list of found web elements.
         """
         return self.driver.find_elements(*locator)
+
+    def find_element(self, locator):
+        """
+        Finds web element matching the given locator.
+
+        Args:
+            locator (tuple): The locator tuple (By.<method>, <value>) for finding the elements.
+
+        Returns:
+            WebElement: found web element.
+        """
+        return self.driver.find_element(*locator)
 
     def is_displayed(self, locator):
         """
@@ -97,58 +123,105 @@ class BasePage:
         """
         self.driver.refresh()
 
-    def wait_for_element_to_be_clickable(self, locator):
+    def wait_for_element_to_be_clickable(self, locator, timeout=10):
         """
         Waits until the specified element is clickable.
 
         Args:
             locator (tuple): The locator tuple (By.<method>, <value>) for finding the element.
+            timeout (int): time to wait until expected condition.
 
         Returns:
             WebElement: The clickable web element.
         """
-        wait = WebDriverWait(self.driver, 20)
+        wait = WebDriverWait(self.driver, timeout)
         return wait.until(EC.element_to_be_clickable(locator))
 
-    def wait_for_element_to_be_visible(self, locator):
+    def wait_for_element_to_be_visible(self, locator, timeout=10):
         """
         Waits until the specified element is visible on the page.
 
         Args:
             locator (tuple): The locator tuple (By.<method>, <value>) for finding the element.
+            timeout (int): time to wait until expected condition.
 
         Returns:
             WebElement: The visible web element.
         """
-        wait = WebDriverWait(self.driver, 20)
+        wait = WebDriverWait(self.driver, timeout)
         return wait.until(EC.visibility_of_element_located(locator))
 
-    def wait_for_element_to_be_present(self, locator):
+    def wait_for_element_to_be_invisible(self, locator, timeout=10):
+        """
+        Waits until the specified element is invisible on the page.
+
+        Args:
+            locator (tuple): The locator tuple (By.<method>, <value>) for finding the element.
+            timeout (int): time to wait until expected condition.
+
+        Returns:
+            WebElement: The visible web element.
+        """
+        wait = WebDriverWait(self.driver, timeout)
+        return wait.until(EC.invisibility_of_element_located(locator))
+
+    def wait_for_element_to_be_present(self, locator, timeout=10):
         """
         Waits until the specified element is present in the DOM.
 
         Args:
             locator (tuple): The locator tuple (By.<method>, <value>) for finding the element.
+            timeout (int): time to wait until expected condition.
 
         Returns:
             WebElement: The web element present in the DOM.
         """
-        wait = WebDriverWait(self.driver, 20)
+        wait = WebDriverWait(self.driver, timeout)
         return wait.until(EC.presence_of_element_located(locator))
 
-    def wait_for_text_to_be_present_in_element(self, locator, text):
+    def wait_for_text_to_be_present_in_element(self, locator, text, timeout=10):
         """
         Waits until the specified element is present in the DOM with text.
 
         Args:
             locator (tuple): The locator tuple (By.<method>, <value>) for finding the element.
-            text (string): text to be present in element
+            text (string): text to be present in element.
+            timeout (int): time to wait until expected condition.
 
         Returns:
             WebElement: The web element present in the DOM with text.
         """
-        wait = WebDriverWait(self.driver, 20)
+        wait = WebDriverWait(self.driver, timeout)
         return wait.until(EC.text_to_be_present_in_element(locator, text))
+
+    def wait_element_to_be_selected(self, element, timeout=10):
+        """
+        Waits until the specified element is selected in the DOM.
+
+        Args:
+            element (WebElement): WbElement.
+            timeout (int): time to wait until expected condition.
+
+        Returns:
+            WebElement: The web element selected in the DOM.
+        """
+        wait = WebDriverWait(self.driver, timeout)
+        return wait.until(EC.element_to_be_selected(element))
+
+    def wait_title_contain_text(self, text, timeout=30, poll_frequency=0.5):
+        """
+        Waits until the page title contains text.
+
+        Args:
+            text (string): text.
+            timeout (int): time to wait until expected condition.
+            poll_frequency (float): sleep interval between calls. By default, it is 0.5 second.
+
+        Returns:
+            WebElement: The web element in the DOM.
+        """
+        wait = WebDriverWait(self.driver, timeout, poll_frequency)
+        return wait.until(EC.title_contains(text))
 
     def execute_script(self, script, *args):
         """

@@ -66,13 +66,6 @@ def driver(request, test_browser, headless):
             driver = webdriver.Firefox(options=geco_options)
     elif test_browser == 'chrome':
         chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_argument('--ignore-certificate-errors')
-        chrome_options.add_argument('--allow-running-insecure-content')
-        chrome_options.add_argument('--allow-insecure-localhost')
-        chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument('--disable-web-security')
-        chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.add_argument("--disable-popup-blocking")
         if headless == 'true':
             chrome_options.add_argument("--headless=new")
         driver = webdriver.Chrome(options=chrome_options)
