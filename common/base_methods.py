@@ -1,4 +1,5 @@
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, WebDriverException
+from selenium.webdriver import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 import time
@@ -232,3 +233,30 @@ class BasePage:
             *args: Any arguments to pass into the script.
         """
         self.driver.execute_script(script, *args)
+
+    def scroll_into_view(self, element):
+        """
+        Scrolls the provided element into the view using JavaScript.
+
+        Args:
+            element: The WebElement to scroll into view.
+        """
+        self.driver.execute_script("arguments[0].scrollIntoView();", element)
+
+    def get_alert_text(self):
+        """
+        Retrieves the text from the alert dialog.
+
+        Returns:
+            The text displayed in the alert dialog.
+        """
+        return self.driver.switch_to.alert.text
+
+    def scroll_to_element(self, element):
+        """
+        Scrolls to the specified element using ActionChains.
+
+        Args:
+            element: The WebElement to scroll to.
+        """
+        ActionChains(self.driver).scroll_to_element(element).perform()

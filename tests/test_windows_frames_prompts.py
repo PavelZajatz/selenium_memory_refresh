@@ -16,6 +16,7 @@ class WFPsPageLocators:
     URL_1 = "https://parsinger.ru/selenium/5.8/5/index.html"
     URL_2 = "http://parsinger.ru/blank/3/index.html"
     URL_3 = "http://parsinger.ru/window_size/2/index.html"
+    URL_4 = "https://parsinger.ru/selenium/5.8/3/index.html"
     IFRAME = (By.XPATH, "//iframe[contains(@id, 'iframe')]")
     PRESS_ME_BTN = (By.TAG_NAME, 'button')
     IFRAME_TXT = (By.TAG_NAME, 'p')
@@ -25,6 +26,7 @@ class WFPsPageLocators:
     RESULT = (By.ID, 'result')
     WIDTH = (By.ID, 'width')
     HEIGHT = (By.ID, 'height')
+    PINS = (By.XPATH, "//span[@class='pin']")
 
 
 class TestWindowsFramesPromptsPage:
@@ -149,3 +151,39 @@ class TestWindowsFramesPromptsPage:
 
         result_text = self.page.wait_for_text_to_be_present_in_element(WFPsPageLocators.RESULT, expected_result)
         assert result_text == expected_result
+
+    def test_find_correct_pin(self):
+        """
+        Tests the functionality of finding the correct PIN code on a webpage.
+
+        This method navigates to the specified URL, retrieves all possible PIN codes from the page, and iteratively attempts
+        to input each PIN code into a prompt until the correct one is found. The test asserts that the correct PIN is
+        identified by comparing the extracted secret code with the expected value.
+
+        Steps:
+        1. Open the URL specified by `WFPsPageLocators.URL_4`.
+        2. Find all elements representing PIN codes using the locator `WFPsPageLocators.PINS`.
+        3. Iterate over each PIN code:
+            - Click on the input field located by `WFPsPageLocators.INPUT_FLD`.
+            - Enter the PIN code into the alert prompt.
+            - Accept the alert.
+            - Retrieve the text from the result field located by `WFPsPageLocators.RESULT`.
+            - Break the loop if the result does not indicate an incorrect PIN code.
+        4. Assert that the correct PIN code produces the expected secret value `'1261851212132345456274632'`.
+
+        Raises:
+            AssertionError: If the correct secret code is not found.
+        """
+        self.page.open_url(WFPsPageLocators.URL_4)
+        pins = self.page.find_elements(WFPsPageLocators.PINS)
+        for pin in pins:
+            pin_code = pin.text
+            self.page.click(WFPsPageLocators.INPUT_FLD)
+            prompt = self.page.driver.switch_to.alert
+            prompt.send_keys(pin_code)
+            prompt.accept()
+            secret = self.page.get_text(WFPsPageLocators.RESULT)
+            if secret != 'Неверный пин-код':
+                break
+
+        assert secret == '1261851212132345456274632'

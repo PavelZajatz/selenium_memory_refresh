@@ -69,6 +69,7 @@ def driver(request, test_browser, headless):
         if headless == 'true':
             chrome_options.add_argument("--headless=new")
         driver = webdriver.Chrome(options=chrome_options)
+        driver.implicitly_wait(10)
     else:
         raise ValueError(f'--browser="{test_browser}" is not chrome or firefox')
 
