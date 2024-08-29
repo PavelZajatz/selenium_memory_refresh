@@ -19,6 +19,7 @@ class CheckboxesLocators:
     CHECKBOX = (By.TAG_NAME, 'input')
     CONTAINERS = (By.CLASS_NAME, 'container')
     CHECK_BTN = (By.XPATH, 'button')
+    FLASH_CHECKBOX = (By.TAG_NAME, 'button')
     RESULT = (By.XPATH, '//*[@id="result"]|//*[@class="message"]|//*[@id="message"]')
     CLOSE_ADD_BTN = (By.XPATH, "//*[@id='close_ad']|//*[@id='ad']//*[@class='close']")
     BOX_BTN = (By.CSS_SELECTOR, '.box button')
@@ -89,7 +90,7 @@ class TestCheckboxes:
         """
         self.page.open_url(CheckboxesLocators.URL_2)
         self.page.wait_element_to_be_selected(self.page.find_element(CheckboxesLocators.CHECKBOX))
-        self.page.find_element(CheckboxesLocators.CHECK_BTN).click()
+        self.page.find_element(CheckboxesLocators.FLASH_CHECKBOX).click()
         assert self.page.find_element(CheckboxesLocators.RESULT).text == "34D0-3SCV-SCM0-654R-DVM9-42IU"
 
     def test_annoying_add(self):

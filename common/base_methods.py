@@ -54,7 +54,7 @@ class BasePage:
         Returns:
             text[string]: text from element.
         """
-        self.wait_for_element_to_be_present(locator=locator)
+        self.wait_for_element_to_be_visible(locator=locator)
         element = self.driver.find_element(*locator)
         return element.text
 
