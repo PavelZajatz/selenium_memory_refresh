@@ -92,24 +92,65 @@ class WindowsFramesPromptsPage(BasePage):
             return ""
 
     def switch_to_alert(self):
+        """
+        Switches the driver's context to the currently active alert.
+
+        Returns:
+            Alert: The active alert object to interact with.
+        """
         return self.driver.switch_to.alert
 
     def switch_to_alert_and_send_keys(self, key):
+        """
+        Switches to the active alert, sends the specified keys, and accepts the alert.
+
+        Args:
+            key (str): The keys to send to the alert's input field.
+        """
         prompt = self.switch_to_alert()
         prompt.send_keys(key)
         prompt.accept()
 
     def switch_to_iframe(self, iframe):
+        """
+        Switches the driver's context to the specified iframe.
+
+        Args:
+            iframe (str or WebElement): The iframe to switch to, identified by name, index, or WebElement.
+        """
         self.driver.switch_to.frame(iframe)
 
     def switch_to_default_content(self):
+        """
+        Switches the driver's context back to the default content, i.e., the main document.
+
+        Use this method to exit an iframe or other nested context and return to the main document.
+        """
         self.driver.switch_to.default_content()
 
     def switch_to_window(self, window):
+        """
+        Switches the driver's context to the specified window or tab.
+
+        Args:
+            window (str): The handle of the window or tab to switch to.
+        """
         self.driver.switch_to.window(window)
 
     def get_window_handles(self):
+        """
+        Retrieves a list of window handles currently opened by the WebDriver.
+
+        Returns:
+            list: A list of strings, each representing a handle to an open window or tab.
+        """
         return self.driver.window_handles
 
     def get_page_title(self):
+        """
+        Retrieves the title of the current page.
+
+        Returns:
+            str: The title of the current page.
+        """
         return self.driver.title

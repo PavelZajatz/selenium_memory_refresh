@@ -1,5 +1,3 @@
-from selenium.webdriver.common.by import By
-
 from ..common.base_methods import BasePage
 
 
