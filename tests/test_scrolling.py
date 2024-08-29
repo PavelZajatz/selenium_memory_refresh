@@ -1,6 +1,6 @@
 import pytest
-from selenium.webdriver.common.by import By
 from ..pages.cookies_page import CookiesPage
+
 
 class CookiesLocators:
     """
@@ -8,6 +8,7 @@ class CookiesLocators:
     """
 
     URL_1 = "https://parsinger.ru/methods/3/index.html"
+
 
 class TestCookies:
     @pytest.fixture(autouse=True)

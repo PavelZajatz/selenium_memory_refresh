@@ -90,3 +90,26 @@ class WindowsFramesPromptsPage(BasePage):
             return self.driver.find_element(*locator).text
         except:
             return ""
+
+    def switch_to_alert(self):
+        return self.driver.switch_to.alert
+
+    def switch_to_alert_and_send_keys(self, key):
+        prompt = self.switch_to_alert()
+        prompt.send_keys(key)
+        prompt.accept()
+
+    def switch_to_iframe(self, iframe):
+        self.driver.switch_to.frame(iframe)
+
+    def switch_to_default_content(self):
+        self.driver.switch_to.default_content()
+
+    def switch_to_window(self, window):
+        self.driver.switch_to.window(window)
+
+    def get_window_handles(self):
+        return self.driver.window_handles
+
+    def get_page_title(self):
+        return self.driver.title

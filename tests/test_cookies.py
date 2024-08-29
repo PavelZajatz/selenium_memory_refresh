@@ -33,7 +33,7 @@ class TestCookies:
     def test_cookies_collect(self):
         self.page.open_url(CookiesLocators.URL_1)
         total = 0
-        cookies = self.page.driver.get_cookies()
+        cookies = self.page.get_cookies()
         for cookie in cookies:
             if int(cookie['name'].split("_")[-1]) % 2 == 0:
                 total += int(cookie['value'])

@@ -2,10 +2,8 @@ import time
 
 import pytest
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
 
 from ..pages.windows_frames_prompts_page import WindowsFramesPromptsPage
-from selenium.webdriver.support import expected_conditions as EC
 
 
 class WFPsPageLocators:
@@ -44,20 +42,6 @@ class TestWindowsFramesPromptsPage:
         """
             Test method to interact with iframes on the page and retrieve a secret code.
 
-            Steps:
-            1. Navigate to the URL defined in `WFPsPageLocators.URL_1`.
-            2. Locate all iframes using the locator specified in `WFPsPageLocators.IFRAME`.
-            3. For each iframe:
-               - Switch to the iframe using `driver.switch_to.frame()`.
-               - Click the button located by `WFPsPageLocators.PRESS_ME_BTN`.
-               - Get the text from the iframe using `WFPsPageLocators.IFRAME_TXT`.
-               - Switch back to the default content using `driver.switch_to.default_content()`.
-               - Enter the retrieved text into the input field located by `WFPsPageLocators.INPUT`.
-               - Click the button located by `WFPsPageLocators.CHECK_BTN`.
-               - Try to get the text from any alert using `self.page.try_to_get_text_from_alert()`.
-               - If a secret code is found, break the loop.
-            4. Assert that the retrieved secret code equals `'FD79-32DJ-79XB-124S-P3DX-2456-DFB-DSA9'`.
-
             Asserts:
                 - Asserts that the retrieved secret code is equal to `'FD79-32DJ-79XB-124S-P3DX-2456-DFB-DSA9'`.
 
@@ -67,10 +51,10 @@ class TestWindowsFramesPromptsPage:
         self.page.open_url(WFPsPageLocators.URL_1)
 
         for iframe in self.page.find_elements(WFPsPageLocators.IFRAME):
-            self.page.driver.switch_to.frame(iframe)
+            self.page.switch_to_iframe(iframe)
             self.page.click(WFPsPageLocators.PRESS_ME_BTN)
             pwd = self.page.get_text_from_element(WFPsPageLocators.IFRAME_TXT)
-            self.page.driver.switch_to.default_content()
+            self.page.switch_to_default_content()
             self.page.enter_text(WFPsPageLocators.INPUT, pwd)
             self.page.click(WFPsPageLocators.CHECK_BTN)
             secret = self.page.try_to_get_text_from_alert()
@@ -103,9 +87,9 @@ class TestWindowsFramesPromptsPage:
         buttons = self.page.find_elements(WFPsPageLocators.INPUT_FLD)
         for button in buttons:
             button.click()
-            self.page.driver.switch_to.window(self.page.driver.window_handles[-1])
-            total += int(self.page.driver.title)
-            self.page.driver.switch_to.window(self.page.driver.window_handles[0])
+            self.page.switch_to_window(self.page.get_window_handles()[-1])
+            total += int(self.page.get_page_title())
+            self.page.switch_to_window(self.page.get_window_handles()[0])
 
         assert total == 77725787998028643152187739088279
 
@@ -179,9 +163,7 @@ class TestWindowsFramesPromptsPage:
         for pin in pins:
             pin_code = pin.text
             self.page.click(WFPsPageLocators.INPUT_FLD)
-            prompt = self.page.driver.switch_to.alert
-            prompt.send_keys(pin_code)
-            prompt.accept()
+            self.page.switch_to_alert_and_send_keys(pin_code)
             secret = self.page.get_text_from_element(WFPsPageLocators.RESULT)
             if secret != 'Неверный пин-код':
                 break
