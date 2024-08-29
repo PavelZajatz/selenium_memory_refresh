@@ -28,6 +28,10 @@ class BasePage:
         """
         self.driver.get(url)
 
+    def refresh_page(self):
+        """Refreshes the current page."""
+        self.driver.refresh()
+
     def click(self, locator):
         """
         Clicks the specified web element.
@@ -40,7 +44,7 @@ class BasePage:
         element = self.driver.find_element(*locator)
         element.click()
 
-    def get_text(self, locator):
+    def get_text_from_element(self, locator):
         """
         Get text from the specified web element.
 
@@ -64,6 +68,7 @@ class BasePage:
         Returns:
             list[WebElement]: A list of found web elements.
         """
+        self.wait_for_element_to_be_present(locator=locator)
         return self.driver.find_elements(*locator)
 
     def find_element(self, locator):
@@ -117,12 +122,6 @@ class BasePage:
         element = self.driver.find_element(*locator)
         element.clear()
         element.send_keys(keys)
-
-    def refresh_page(self):
-        """
-        Refreshes the current page in the browser.
-        """
-        self.driver.refresh()
 
     def wait_for_element_to_be_clickable(self, locator, timeout=10):
         """

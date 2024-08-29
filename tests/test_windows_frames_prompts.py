@@ -69,7 +69,7 @@ class TestWindowsFramesPromptsPage:
         for iframe in self.page.find_elements(WFPsPageLocators.IFRAME):
             self.page.driver.switch_to.frame(iframe)
             self.page.click(WFPsPageLocators.PRESS_ME_BTN)
-            pwd = self.page.get_text(WFPsPageLocators.IFRAME_TXT)
+            pwd = self.page.get_text_from_element(WFPsPageLocators.IFRAME_TXT)
             self.page.driver.switch_to.default_content()
             self.page.enter_text(WFPsPageLocators.INPUT, pwd)
             self.page.click(WFPsPageLocators.CHECK_BTN)
@@ -182,7 +182,7 @@ class TestWindowsFramesPromptsPage:
             prompt = self.page.driver.switch_to.alert
             prompt.send_keys(pin_code)
             prompt.accept()
-            secret = self.page.get_text(WFPsPageLocators.RESULT)
+            secret = self.page.get_text_from_element(WFPsPageLocators.RESULT)
             if secret != 'Неверный пин-код':
                 break
 

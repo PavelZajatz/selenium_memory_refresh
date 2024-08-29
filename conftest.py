@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from selenium import webdriver
 
@@ -11,6 +13,8 @@ def pytest_addoption(parser):
     """
     parser.addoption('--browser', help='Which test browser?', default='chrome')
     parser.addoption('--headless', help='headless or non-headless?', choices=['true', 'false'], default='false')
+    parser.addoption(
+        '--extension', help='load "coordinates.crx" extension?', choices=['true', 'false'], default='false')
 
 
 @pytest.fixture(scope='session')
@@ -41,6 +45,20 @@ def headless(request):
     return request.config.getoption('--headless')
 
 
+@pytest.fixture(scope='session')
+def extension(request):
+    """
+    Load the 'coordinates' extension to browser.
+
+    Args:
+        request (FixtureRequest): A pytest fixture that provides information about the requesting test function.
+
+    Returns:
+        str: 'true' or 'false', based on the value of the --headless option.
+    """
+    return request.config.getoption('--extension')
+
+
 @pytest.fixture(scope='class', autouse=True)
 def driver(request, test_browser, headless):
     """
@@ -68,6 +86,8 @@ def driver(request, test_browser, headless):
         chrome_options = webdriver.ChromeOptions()
         if headless == 'true':
             chrome_options.add_argument("--headless=new")
+        if extension == 'true':
+            chrome_options.add_extension(f'{os.path.dirname(os.path.abspath(__file__))}/resources/0.2_0.crx')
         driver = webdriver.Chrome(options=chrome_options)
         driver.implicitly_wait(10)
     else:

@@ -14,14 +14,24 @@ class CheckboxesLocators:
     URL_3 = "https://parsinger.ru/selenium/5.9/5/index.html"
     URL_4 = "https://parsinger.ru/selenium/5.9/4/index.html"
     URL_5 = "http://parsinger.ru/expectations/4/index.html"
+    URL_6 = "https://parsinger.ru/selenium/5.5/5/1.html"
 
     CHECKBOX = (By.TAG_NAME, 'input')
     CONTAINERS = (By.CLASS_NAME, 'container')
-    CHECK_BTN = (By.CSS_SELECTOR, 'button')
+    CHECK_BTN = (By.XPATH, 'button')
     RESULT = (By.XPATH, '//*[@id="result"]|//*[@class="message"]|//*[@id="message"]')
     CLOSE_ADD_BTN = (By.XPATH, "//*[@id='close_ad']|//*[@id='ad']//*[@class='close']")
     BOX_BTN = (By.CSS_SELECTOR, '.box button')
     CLICK_BTN = (By.ID, "btn")
+    DIV_CONTAINERS = (By.XPATH, '//*[@id="main-container"]/div')
+    SPAN = (By.XPATH, 'span')
+    DROPDOWN = lambda x: (By.XPATH, f"span[contains(text(), '{x}')]/../select")
+    OPTION = lambda x: (By.XPATH, f"span[contains(text(), '{x}')]/..//option[@value='{x}']")
+    COLOR_BTN = lambda x: (By.XPATH, f"span[contains(text(), '{x}')]/..//button[@data-hex='{x}']")
+    COLOR_CHECKBOX = (By.XPATH, "input[@type='checkbox']")
+    INPUT_FIELD = (By.XPATH, "input[@type='text']")
+
+    CHECK_ALL_ELS_BTN = (By.XPATH, "//button[contains(text(), 'Проверить все элементы')]")
 
     @staticmethod
     def dynamic_checkbox_locator(position):
@@ -135,3 +145,31 @@ class TestCheckboxes:
         self.page.open_url(CheckboxesLocators.URL_5)
         self.page.wait_for_element_to_be_clickable(CheckboxesLocators.CLICK_BTN).click()
         assert self.page.wait_title_contain_text(partial_title, poll_frequency=0.05)
+
+    def test_interact_with_checkboxes(self):
+        """
+        Test method to interact with checkboxes, dropdowns, and buttons on the Checkbox Page.
+
+        The test iterates through each element in the main container, selects the dropdown option,
+        clicks the associated button, checks the checkbox, enters text, and submits the form.
+        Finally, it verifies the result by checking the alert text.
+
+        Asserts:
+            N/A: This test is focused on output rather than assertions.
+        """
+
+        self.page.open_url(CheckboxesLocators.URL_6)
+        elements = self.page.find_elements(CheckboxesLocators.DIV_CONTAINERS)
+
+        for el in elements:
+            text = el.find_element(*CheckboxesLocators.SPAN).text
+            el.find_element(*CheckboxesLocators.DROPDOWN(text)).click()
+            el.find_element(*CheckboxesLocators.OPTION(text)).click()
+            el.find_element(*CheckboxesLocators.COLOR_BTN(text)).click()
+            el.find_element(*CheckboxesLocators.COLOR_CHECKBOX).click()
+            el.find_element(*CheckboxesLocators.INPUT_FIELD).send_keys(text)
+            el.find_element(*CheckboxesLocators.CHECK_BTN).click()
+
+        self.page.click(CheckboxesLocators.CHECK_ALL_ELS_BTN)
+
+        assert self.page.get_alert_text() == '532344023354423035345134503454510'
