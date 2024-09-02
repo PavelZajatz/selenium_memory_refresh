@@ -1,3 +1,4 @@
+from ..helpers.allure_helper import step
 from ..common.base_methods import BasePage
 
 
@@ -15,6 +16,7 @@ class ScrollingPage(BasePage):
         """
         super().__init__(driver)
 
+    @step
     def click_even_checkboxes(self, container, checkboxes_locator):
         """
         Helper method to click checkboxes with even values within a container element.
@@ -29,6 +31,7 @@ class ScrollingPage(BasePage):
             if int(checkbox.get_attribute('value')) % 2 == 0:
                 checkbox.click()
 
+    @step
     def get_next_span(self, current_span, next_span_locator):
         """
         Finds the next sibling div element to continue the scrolling process.
@@ -42,6 +45,7 @@ class ScrollingPage(BasePage):
         """
         return current_span.find_element(*next_span_locator)
 
+    @step
     def collect_spans(self, container_locator, span_locator, last_span_class, following_span):
         """
         Collects all span elements within a specified container until the last span is reached.
@@ -64,6 +68,7 @@ class ScrollingPage(BasePage):
                 break
         return spans
 
+    @step
     def collect_spans_until_last(self, container_locator, span_locator, last_span_class, following_sibling):
         """
         Collects all spans within a scrollable container until the last span is reached.

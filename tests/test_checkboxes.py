@@ -31,21 +31,8 @@ class CheckboxesLocators:
     COLOR_BTN = lambda x: (By.XPATH, f"span[contains(text(), '{x}')]/..//button[@data-hex='{x}']")
     COLOR_CHECKBOX = (By.XPATH, "input[@type='checkbox']")
     INPUT_FIELD = (By.XPATH, "input[@type='text']")
-
     CHECK_ALL_ELS_BTN = (By.XPATH, "//button[contains(text(), 'Проверить все элементы')]")
-
-    @staticmethod
-    def dynamic_checkbox_locator(position):
-        """
-        Returns an XPath locator for a checkbox element based on the provided position.
-
-        Args:
-            position (int): The position index of the checkbox.
-
-        Returns:
-            tuple: A tuple containing the By.XPATH strategy and the dynamically generated XPath.
-        """
-        return By.XPATH, f'//div[@data-index="{position}"]'
+    DYNAMIC_CHECKBOX = lambda x: (By.XPATH, f'//div[@data-index="{x}"]')
 
 
 class TestCheckboxes:
@@ -107,11 +94,11 @@ class TestCheckboxes:
         self.page.open_url(CheckboxesLocators.URL_3)
         secret = []
         for position in range(9):
-            self.page.click(CheckboxesLocators.dynamic_checkbox_locator(position))
+            self.page.click(CheckboxesLocators.DYNAMIC_CHECKBOX(position))
             self.page.click(CheckboxesLocators.CLOSE_ADD_BTN)
             text = ''
             while text == '':
-                text = self.page.find_element(CheckboxesLocators.dynamic_checkbox_locator(position)).text
+                text = self.page.find_element(CheckboxesLocators.DYNAMIC_CHECKBOX(position)).text
             secret.append(text)
         assert '-'.join(secret) == 'F34S-FFS3-56FGH-LKJ0-2E9D-440D-4Q0D-230S-D120'
 

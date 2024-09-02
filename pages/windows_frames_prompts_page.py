@@ -1,3 +1,4 @@
+from ..helpers.allure_helper import step
 from ..common.base_methods import BasePage
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -17,6 +18,7 @@ class WindowsFramesPromptsPage(BasePage):
         """
         super().__init__(driver)
 
+    @step
     def try_to_get_text_from_alert(self):
         """
         Attempts to retrieve text from a JavaScript alert and close it.
@@ -36,6 +38,7 @@ class WindowsFramesPromptsPage(BasePage):
             return False
         return secret
 
+    @step
     def get_inner_size(self, width_locator, height_locator):
         """
         Retrieves the inner width and height of the browser window from specified elements.
@@ -51,6 +54,7 @@ class WindowsFramesPromptsPage(BasePage):
         inner_height = int(self.driver.find_element(*height_locator).text.split(": ")[1])
         return inner_width, inner_height
 
+    @step
     def get_outer_size(self):
         """
         Retrieves the outer width and height of the browser window.
@@ -61,6 +65,7 @@ class WindowsFramesPromptsPage(BasePage):
         size = self.driver.get_window_size()
         return size.get('width'), size.get('height')
 
+    @step
     def set_window_size(self, width, height):
         """
         Sets the browser window size.
@@ -71,6 +76,7 @@ class WindowsFramesPromptsPage(BasePage):
         """
         self.driver.set_window_size(width, height)
 
+    @step
     def wait_for_text_to_be_present_in_element(self, locator, text, timeout=10):
         """
         Waits for a specific text to be present in an element located by the given locator.
@@ -91,6 +97,7 @@ class WindowsFramesPromptsPage(BasePage):
         except:
             return ""
 
+    @step
     def switch_to_alert(self):
         """
         Switches the driver's context to the currently active alert.
@@ -100,6 +107,7 @@ class WindowsFramesPromptsPage(BasePage):
         """
         return self.driver.switch_to.alert
 
+    @step
     def switch_to_alert_and_send_keys(self, key):
         """
         Switches to the active alert, sends the specified keys, and accepts the alert.
@@ -111,6 +119,7 @@ class WindowsFramesPromptsPage(BasePage):
         prompt.send_keys(key)
         prompt.accept()
 
+    @step
     def switch_to_iframe(self, iframe):
         """
         Switches the driver's context to the specified iframe.
@@ -120,6 +129,7 @@ class WindowsFramesPromptsPage(BasePage):
         """
         self.driver.switch_to.frame(iframe)
 
+    @step
     def switch_to_default_content(self):
         """
         Switches the driver's context back to the default content, i.e., the main document.
@@ -128,6 +138,7 @@ class WindowsFramesPromptsPage(BasePage):
         """
         self.driver.switch_to.default_content()
 
+    @step
     def switch_to_window(self, window):
         """
         Switches the driver's context to the specified window or tab.
@@ -137,6 +148,7 @@ class WindowsFramesPromptsPage(BasePage):
         """
         self.driver.switch_to.window(window)
 
+    @step
     def get_window_handles(self):
         """
         Retrieves a list of window handles currently opened by the WebDriver.
@@ -146,6 +158,7 @@ class WindowsFramesPromptsPage(BasePage):
         """
         return self.driver.window_handles
 
+    @step
     def get_page_title(self):
         """
         Retrieves the title of the current page.

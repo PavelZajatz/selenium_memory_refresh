@@ -1,5 +1,7 @@
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.color import Color
+
+from ..helpers.allure_helper import step
 from ..common.base_methods import BasePage
 
 
@@ -21,6 +23,7 @@ class DragAndDropPage(BasePage):
         super().__init__(driver)
         self.action = ActionChains(driver)
 
+    @step
     def drag_and_drop(self, source, target):
         """
         Drags a source element and drops it onto a target element.
@@ -31,6 +34,7 @@ class DragAndDropPage(BasePage):
         """
         self.action.drag_and_drop(source, target).perform()
 
+    @step
     def click_and_drag_by_offset(self, element, x_offset, y_offset=0):
         """
         Clicks and holds an element, then drags it by a specified offset.
@@ -42,6 +46,7 @@ class DragAndDropPage(BasePage):
         """
         self.action.click_and_hold(element).move_by_offset(x_offset, y_offset).release().perform()
 
+    @step
     def move_sliders_to_position(self, sliders, cur_pos_elem, new_positions):
         """
         Moves sliders to their target positions.
@@ -62,6 +67,7 @@ class DragAndDropPage(BasePage):
             self.execute_script(
                 "arguments[0].dispatchEvent(new Event('change', {bubbles: true}));", cur_pos_element)
 
+    @step
     def drag_and_drop_with_color_matching(self, draggables, droppables, color_property='background-color'):
         """
         Performs drag-and-drop actions by matching draggable elements with droppable targets based on a color property.
@@ -89,6 +95,7 @@ class DragAndDropPage(BasePage):
             else:
                 raise ValueError(f"No matching droppable found for color: {draggable_color}")
 
+    @step
     def drag_pieces_to_ranges(self, pieces, ranges, p_tag, color_property='background-color'):
         """
         Drags pieces to their corresponding ranges based on matching colors and verifies the result.

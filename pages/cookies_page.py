@@ -1,4 +1,5 @@
 from ..common.base_methods import BasePage
+from ..helpers.allure_helper import step
 
 
 class CookiesPage(BasePage):
@@ -15,6 +16,7 @@ class CookiesPage(BasePage):
         """
         super().__init__(driver)
 
+    @step
     def get_cookies(self):
         """
         Retrieves all cookies from the browser.
@@ -24,6 +26,7 @@ class CookiesPage(BasePage):
         """
         return self.driver.get_cookies()
 
+    @step
     def add_cookies(self, cookies):
         """
         Adds a list of cookies to the browser session.
@@ -35,10 +38,12 @@ class CookiesPage(BasePage):
         for cookie in cookies:
             self.driver.add_cookie(cookie)
 
+    @step
     def delete_all_cookies(self):
         """Deletes all cookies from the current browser session."""
         self.driver.delete_all_cookies()
 
+    @step
     def add_cookie(self, cookie):
         """
         Adds a single cookie to the browser session.
@@ -48,6 +53,7 @@ class CookiesPage(BasePage):
         """
         self.driver.add_cookie(cookie)
 
+    @step
     def sum_even_cookies(self):
         """
         Sums the values of cookies with even numbers in their names.
@@ -62,6 +68,7 @@ class CookiesPage(BasePage):
                 total += int(cookie['value'])
         return total
 
+    @step
     def find_max_expiry_cookie_url(self, urls):
         """
         Finds the URL with the cookie that has the maximum expiry value.
@@ -87,6 +94,7 @@ class CookiesPage(BasePage):
 
         return max_expiry_link
 
+    @step
     def sum_secret_cookies(self):
         """
         Sums the values of cookies that contain 'secret_cookie_' in their names.

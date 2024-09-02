@@ -1,4 +1,4 @@
-from selenium.common.exceptions import TimeoutException, NoSuchElementException, WebDriverException
+from ..helpers.allure_helper import step
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -19,6 +19,7 @@ class BasePage:
         """
         self.driver = driver
 
+    @step
     def open_url(self, url):
         """
         Opens the specified URL in the browser.
@@ -28,10 +29,12 @@ class BasePage:
         """
         self.driver.get(url)
 
+    @step
     def refresh_page(self):
         """Refreshes the current page."""
         self.driver.refresh()
 
+    @step
     def click(self, locator):
         """
         Clicks the specified web element.
@@ -44,6 +47,7 @@ class BasePage:
         element = self.driver.find_element(*locator)
         element.click()
 
+    @step
     def get_text_from_element(self, locator):
         """
         Get text from the specified web element.
@@ -58,6 +62,7 @@ class BasePage:
         element = self.driver.find_element(*locator)
         return element.text
 
+    @step
     def find_elements(self, locator):
         """
         Finds all web elements matching the given locator.
@@ -71,6 +76,7 @@ class BasePage:
         self.wait_for_element_to_be_present(locator=locator)
         return self.driver.find_elements(*locator)
 
+    @step
     def find_element(self, locator):
         """
         Finds web element matching the given locator.
@@ -83,6 +89,7 @@ class BasePage:
         """
         return self.driver.find_element(*locator)
 
+    @step
     def is_displayed(self, locator):
         """
         Checks if the specified element is visible on the page.
@@ -97,6 +104,7 @@ class BasePage:
         element = self.driver.find_element(*locator)
         return element.is_displayed()
 
+    @step
     def is_enabled(self, locator):
         """
         Checks if the specified element is enabled (clickable) on the page.
@@ -110,6 +118,7 @@ class BasePage:
         element = self.driver.find_element(*locator)
         return element.is_enabled()
 
+    @step
     def enter_text(self, locator, keys):
         """
         Enters the specified text into the input field.
@@ -123,6 +132,7 @@ class BasePage:
         element.clear()
         element.send_keys(keys)
 
+    @step
     def wait_for_element_to_be_clickable(self, locator, timeout=10):
         """
         Waits until the specified element is clickable.
@@ -137,6 +147,7 @@ class BasePage:
         wait = WebDriverWait(self.driver, timeout)
         return wait.until(EC.element_to_be_clickable(locator))
 
+    @step
     def wait_for_element_to_be_visible(self, locator, timeout=10):
         """
         Waits until the specified element is visible on the page.
@@ -151,6 +162,7 @@ class BasePage:
         wait = WebDriverWait(self.driver, timeout)
         return wait.until(EC.visibility_of_element_located(locator))
 
+    @step
     def wait_for_element_to_be_invisible(self, locator, timeout=10):
         """
         Waits until the specified element is invisible on the page.
@@ -165,6 +177,7 @@ class BasePage:
         wait = WebDriverWait(self.driver, timeout)
         return wait.until(EC.invisibility_of_element_located(locator))
 
+    @step
     def wait_for_element_to_be_present(self, locator, timeout=10):
         """
         Waits until the specified element is present in the DOM.
@@ -179,6 +192,7 @@ class BasePage:
         wait = WebDriverWait(self.driver, timeout)
         return wait.until(EC.presence_of_element_located(locator))
 
+    @step
     def wait_for_text_to_be_present_in_element(self, locator, text, timeout=10):
         """
         Waits until the specified element is present in the DOM with text.
@@ -194,6 +208,7 @@ class BasePage:
         wait = WebDriverWait(self.driver, timeout)
         return wait.until(EC.text_to_be_present_in_element(locator, text))
 
+    @step
     def wait_element_to_be_selected(self, element, timeout=10):
         """
         Waits until the specified element is selected in the DOM.
@@ -208,6 +223,7 @@ class BasePage:
         wait = WebDriverWait(self.driver, timeout)
         return wait.until(EC.element_to_be_selected(element))
 
+    @step
     def wait_title_contain_text(self, text, timeout=30, poll_frequency=0.5):
         """
         Waits until the page title contains text.
@@ -223,6 +239,7 @@ class BasePage:
         wait = WebDriverWait(self.driver, timeout, poll_frequency)
         return wait.until(EC.title_contains(text))
 
+    @step
     def execute_script(self, script, *args):
         """
         Executes JavaScript in the context of the current page.
@@ -233,6 +250,7 @@ class BasePage:
         """
         self.driver.execute_script(script, *args)
 
+    @step
     def scroll_into_view(self, element):
         """
         Scrolls the provided element into the view using JavaScript.
@@ -242,6 +260,7 @@ class BasePage:
         """
         self.driver.execute_script("arguments[0].scrollIntoView();", element)
 
+    @step
     def get_alert_text(self):
         """
         Retrieves the text from the alert dialog.
@@ -251,6 +270,7 @@ class BasePage:
         """
         return self.driver.switch_to.alert.text
 
+    @step
     def scroll_to_element(self, element):
         """
         Scrolls to the specified element using ActionChains.
