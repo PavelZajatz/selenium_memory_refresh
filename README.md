@@ -1,4 +1,13 @@
-# Set up python environment for autotests
+# Test framework using Selenium 4 and Pytest
+
+## Description
+This project automates various scrolling, drag and drop actions on web pages, work with checkboxes, cookies, iframes and prompts using Selenium, Pytest and Python. 
+## Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/PavelZajatz/selenium_memory_refresh.git
+   
+## Set up python environment for autotests
 1. Make sure you have python installed on your machine by typing in console "python --version" 
    (python 3.12 was used for test development)
 2. Activate VirtualEnv 
