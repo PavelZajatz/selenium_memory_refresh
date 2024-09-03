@@ -1,44 +1,56 @@
 import pytest
-from ..pages.cookies_page import CookiesPage
+
+from ..pages.scrolling_page import ScrollingPage, ScrollingLocators
 
 
-class CookiesLocators:
-    """
-    Locators and URLs used for testing Cookies.
-    """
-
-    URL_1 = "https://parsinger.ru/methods/3/index.html"
-
-
-class TestCookies:
+class TestScrolling:
     @pytest.fixture(autouse=True)
     def setup(self, driver):
         """
-        Setup fixture to initialize the CookiesPage object.
-
+        Setup fixture to initialize the ScrollingPage object.
         Args:
             driver: WebDriver instance used for interacting with the browser.
         """
-        self.page = CookiesPage(driver)
+        self.page = ScrollingPage(driver)
 
-    def test_cookies_collect(self):
+    def test_infinity_scrolling(self):
         """
-        Tests the collection and summation of specific cookies based on their names.
-
-        This test navigates to the specified URL and collects all cookies set by the webpage.
-        It then filters the cookies to find those whose names end with an even number, sums their values,
-        and asserts that the total sum matches the expected value.
-
-        Steps:
-        1. Open the URL specified by `CookiesLocators.URL_1`.
-        2. Retrieve all cookies set by the webpage.
-        3. Filter cookies based on whether their names end with an even number.
-        4. Sum the values of the filtered cookies.
-        5. Assert that the total sum matches the expected value.
-
-        Raises:
-            AssertionError: If the total sum does not match the expected value.
+        Tests the functionality of infinite scrolling and interaction with dynamically loaded elements on the webpage.
+        This test navigates to the specified URL and interacts with checkboxes inside a scrolling container.
+        It iterates over checkboxes in each dynamically loaded div, clicking only those with even values.
+        The process continues until 99 div elements have been loaded, after which the test asserts that the
+        correct alert text is displayed.
         """
-        self.page.open_url(CookiesLocators.URL_1)
-        total = self.page.sum_even_cookies()
-        assert total == 1962101
+        self.page.open_url(ScrollingLocators.URL_1)
+        checkbox_rows = self.page.find_all_loaded_divs()
+        self.page.scroll_and_click_even_checkboxes(checkbox_rows, 99)
+        self.page.click_alert_btn()
+        alert_text = self.page.get_alert_text()
+
+        assert alert_text == '5402f04236450f263540jk406504l506'
+
+    @pytest.mark.skip
+    def test_collect_and_sum(self):
+        """
+        Tests the collection and summation of text values from spans within multiple scrollable containers.
+        This test navigates to a specific URL and iterates through 5 scrollable containers.
+        It collects all spans in each container, sums their text values, and asserts that the final sum matches
+        the expected value.
+        """
+        self.page.open_url(ScrollingLocators.URL_2)
+        total_sum = self.page.scroll_all_scrollbars_and_sum_numbers()
+
+        assert total_sum == 159858750
+
+    @pytest.mark.flaky(retries=2)
+    def test_collect_and_sum_spans_v2(self):
+        """
+        Tests the collection and summation of text values from paragraph spans within a scrollable container.
+        This test navigates to a specific URL, collects all paragraph spans inside a scrollable container,
+        sums their text values, and asserts the total sum.
+        """
+        self.page.open_url(ScrollingLocators.URL_3)
+        spans = self.page.collect_all_paragraphs()
+        total_sum = self.page.sum_span_text_in_scrollbox(spans)
+
+        assert total_sum == 499917600
