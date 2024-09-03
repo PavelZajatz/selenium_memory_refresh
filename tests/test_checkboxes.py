@@ -124,6 +124,6 @@ class TestCheckboxes:
         self.page.open_url(CheckboxesLocators.URL_6)
         self.page.interact_with_elements()
         self.page.click_check_all_elements_button()
-        result = self.page.get_result_text()
+        result = self.page.get_alert_text()
 
         assert result == expected, f"Should be - {expected}, got - {result}"

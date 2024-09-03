@@ -1,3 +1,6 @@
+import allure
+from allure_commons.types import AttachmentType
+
 from ..helpers.allure_helper import step
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
@@ -18,6 +21,18 @@ class BasePage:
             driver (WebDriver): The Selenium WebDriver instance for interacting with the browser.
         """
         self.driver = driver
+
+    def take_screenshot_as_png(self, name):
+        """
+            Captures a screenshot of the current browser window and attaches it to the Allure report.
+
+            Args:
+                name (str): The name to be used for the screenshot attachment in the Allure report.
+
+            This method uses the `self.driver` instance to capture a screenshot in PNG format and
+            attaches it to the Allure report with the specified name.
+            """
+        allure.attach(self.driver.get_screenshot_as_png(), name=name, attachment_type=AttachmentType.PNG)
 
     @step
     def open_url(self, url):

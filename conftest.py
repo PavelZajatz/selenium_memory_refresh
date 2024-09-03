@@ -3,6 +3,8 @@ import os
 import pytest
 from selenium import webdriver
 
+from .common.base_methods import BasePage
+
 
 def pytest_addoption(parser):
     """
@@ -59,7 +61,7 @@ def extension(request):
     return request.config.getoption('--extension')
 
 
-@pytest.fixture(scope='class', autouse=True)
+@pytest.fixture(scope='function', autouse=True)
 def driver(request, test_browser, headless):
     """
     Initializes the WebDriver instance based on the selected browser and headless mode.
@@ -95,4 +97,17 @@ def driver(request, test_browser, headless):
 
     request.cls.driver = driver
     yield driver
+    result = request.session.testsfailed
+    if result != 0:
+        BasePage.take_screenshot_as_png(request.cls, name=request.node.originalname + "_Failed_Screenshot")
     driver.quit()
+
+
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item):
+    outcome = yield
+    rep = outcome.get_result()
+    if rep.when == "call":
+        setattr(item, "rep_outcome", rep.outcome)
+    else:
+        setattr(item, "rep_outcome", "")

@@ -74,11 +74,11 @@ class TestCookies:
         4. Sum the values of the filtered cookies.
         5. Assert that the total sum matches the expected value.
         """
-        expected = '4901217'
+        expected = 4901217
         self.page.open_url(CookiesLocators.URL_1)
         total = self.page.sum_secret_cookies()
 
-        assert total == expected, f"Expected secret cookie sum to be '{expected}, but got {total}"
+        assert total == expected, f"Expected secret cookie sum to be '{expected}', but got {total}"
 
     @pytest.mark.parametrize("cookies", [
         [{'name': 'KXIYO4xMrWh', 'value': 'ibyAZPfXAsPqptPaNyL'},
