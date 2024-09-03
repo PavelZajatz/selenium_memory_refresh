@@ -24,12 +24,15 @@ class TestCheckboxes:
         4. If highlighted, click the corresponding button.
         5. Assert the final message displayed on the page to verify success.
         """
+        expected = 'GFD9-3SV0-3280-WEZC-23UN-Q921-3G5D'
         self.page.open_url(CheckboxesLocators.URL_1)
         containers = self.page.find_containers()
         for container in containers:
             if self.page.is_checkbox_highlighted(container):
                 self.page.click_button_in_container(container)
-        assert self.page.get_result_text() == 'GFD9-3SV0-3280-WEZC-23UN-Q921-3G5D'
+        result = self.page.get_result_text()
+
+        assert result == expected, f"Should be - {expected}, got - {result}"
 
     def test_flashing_checkbox(self):
         """
@@ -41,10 +44,13 @@ class TestCheckboxes:
         3. Click the corresponding button.
         4. Assert the final message displayed on the page to verify success.
         """
+        expected = "34D0-3SCV-SCM0-654R-DVM9-42IU"
         self.page.open_url(CheckboxesLocators.URL_2)
         self.page.wait_for_checkbox_selection()
         self.page.click_flash_checkbox()
-        assert self.page.get_result_text() == "34D0-3SCV-SCM0-654R-DVM9-42IU"
+        result = self.page.get_result_text()
+
+        assert result == expected, f"Should be - {expected}, got - {result}"
 
     def test_annoying_add(self):
         """
@@ -57,6 +63,7 @@ class TestCheckboxes:
         4. Retrieve and store the text associated with each checkbox.
         5. Assert that the concatenated secret code matches the expected value.
         """
+        expected = 'F34S-FFS3-56FGH-LKJ0-2E9D-440D-4Q0D-230S-D120'
         self.page.open_url(CheckboxesLocators.URL_3)
         secret = []
         for position in range(9):
@@ -64,7 +71,9 @@ class TestCheckboxes:
             self.page.close_advertisement()
             text = self.page.get_dynamic_checkbox_text(position)
             secret.append(text)
-        assert '-'.join(secret) == 'F34S-FFS3-56FGH-LKJ0-2E9D-440D-4Q0D-230S-D120'
+        result = '-'.join(secret)
+
+        assert result == expected, f"Should be - {expected}, got - {result}"
 
     def test_close_add(self):
         """
@@ -77,10 +86,13 @@ class TestCheckboxes:
         4. Click the box button.
         5. Assert that the result message matches the expected value.
         """
+        expected = 'FS03-R9R3-SVV9-3P05-DSS1-01VI'
         self.page.open_url(CheckboxesLocators.URL_4)
         self.page.close_advertisement()
         self.page.click_box_button()
-        assert self.page.get_result_text() == 'FS03-R9R3-SVV9-3P05-DSS1-01VI'
+        result = self.page.get_result_text()
+
+        assert result == expected, f"Should be - {expected}, got - {result}"
 
     @pytest.mark.flaky(retries=2)
     def test_secret_title(self):
@@ -95,7 +107,7 @@ class TestCheckboxes:
         partial_title = 'JK8HQ'
         self.page.open_url(CheckboxesLocators.URL_5)
         self.page.click_click_button()
-        self.page.wait_for_page_title(partial_title)
+        assert self.page.wait_for_page_title(partial_title), f"Title which contains '{partial_title} is not found"
 
     def test_interact_with_checkboxes(self):
         """
@@ -108,7 +120,10 @@ class TestCheckboxes:
         4. Click the 'Check All Elements' button.
         5. Verify the result by checking the alert text.
         """
+        expected = '532344023354423035345134503454510'
         self.page.open_url(CheckboxesLocators.URL_6)
         self.page.interact_with_elements()
         self.page.click_check_all_elements_button()
-        assert self.page.get_alert_text() == '532344023354423035345134503454510'
+        result = self.page.get_result_text()
+
+        assert result == expected, f"Should be - {expected}, got - {result}"

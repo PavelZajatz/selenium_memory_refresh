@@ -176,7 +176,7 @@ class Checkboxes(BasePage):
             partial_title (str): The partial title text to wait for.
             poll_frequency (float): The frequency in seconds to poll for the title. Default is 0.05 seconds.
         """
-        self.wait_title_contain_text(partial_title, timeout=60, poll_frequency=poll_frequency)
+        return self.wait_title_contain_text(partial_title, timeout=60, poll_frequency=poll_frequency)
 
     @step
     def click_click_button(self):
