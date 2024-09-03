@@ -1,22 +1,6 @@
 import pytest
-from selenium.webdriver.common.by import By
 
-from ..pages.cookies_page import CookiesPage
-
-
-class CookiesLocators:
-    """
-    Locators and URLs used for testing Cookies.
-    """
-
-    URL_1 = "https://parsinger.ru/methods/3/index.html"
-    URL_2 = "https://parsinger.ru/methods/5/index.html"
-    URL_3 = "https://parsinger.ru/selenium/5.6/1/index.html"
-    A_TAG = (By.TAG_NAME, 'a')
-    RESULT = (By.ID, 'result')
-    HACKERS = (By.CSS_SELECTOR, '.hackers')
-    AGE = (By.ID, 'age')
-    LANGUAGES = (By.CSS_SELECTOR, '#skillsList li')
+from ..pages.cookies_page import CookiesPage, CookiesLocators
 
 
 class TestCookies:
@@ -31,14 +15,26 @@ class TestCookies:
         self.page = CookiesPage(driver)
 
     def test_cookies_collect(self):
-        self.page.open_url(CookiesLocators.URL_1)
-        total = 0
-        cookies = self.page.get_cookies()
-        for cookie in cookies:
-            if int(cookie['name'].split("_")[-1]) % 2 == 0:
-                total += int(cookie['value'])
+        """
+        Tests the collection and summation of specific cookies based on their names.
 
-        assert total == 1962101
+        This test navigates to the specified URL and collects all cookies set by the webpage.
+        It then filters the cookies to find those whose names end with an even number, sums their values,
+        and asserts that the total sum matches the expected value.
+
+        Steps:
+        1. Open the URL specified by `CookiesLocators.URL_1`.
+        2. Retrieve all cookies set by the webpage.
+        3. Filter cookies based on whether their names end with an even number.
+        4. Sum the values of the filtered cookies.
+        5. Assert that the total sum matches the expected value.
+
+        Raises:
+            AssertionError: If the total sum does not match the expected value.
+        """
+        self.page.open_url(CookiesLocators.URL_1)
+        total = self.page.sum_even_cookies()
+        assert total == 1962101, f"Expected cookie sum to be 1962101, but got {total}"
 
     def test_max_expiry_cookie(self):
         """
@@ -59,13 +55,13 @@ class TestCookies:
             AssertionError: If the retrieved text does not match the expected value.
         """
         self.page.open_url(CookiesLocators.URL_2)
-        hrefs = self.page.find_elements(CookiesLocators.A_TAG)
-        urls = [item.get_attribute('href') for item in hrefs]
-        max_expiry_link = self.page.find_max_expiry_cookie_url(urls)
+        urls = self.page.get_all_urls()
+        max_expiry_link = self.page.find_max_expiry_url(urls)
         self.page.open_url(max_expiry_link)
-        result_text = self.page.get_text_from_element(CookiesLocators.RESULT)
+        result_text = self.page.retrieve_result_text()
 
-        assert result_text == '563244506345412334251234560541'
+        assert result_text == '563244506345412334251234560541', \
+            f"Expected result text to be '563244506345412334251234560541', but got '{result_text}'"
 
     def test_sum_secret_cookies(self):
         """
@@ -88,7 +84,7 @@ class TestCookies:
         self.page.open_url(CookiesLocators.URL_1)
         total = self.page.sum_secret_cookies()
 
-        assert total == 4901217
+        assert total == 4901217, f"Expected secret cookie sum to be 4901217, but got {total}"
 
     @pytest.mark.parametrize("cookies", [
         [{'name': 'KXIYO4xMrWh', 'value': 'ibyAZPfXAsPqptPaNyL'},
@@ -202,22 +198,8 @@ class TestCookies:
 
         AssertionError: If the value does not match the expected value.
         """
+        expected_value = "ibyAZPfXAsPqptPaNyL"
+
         self.page.open_url(CookiesLocators.URL_3)
-
-        hackers = []
-
-        for cookie in cookies:
-            self.page.delete_all_cookies()
-            self.page.add_cookie(cookie)
-            self.page.refresh_page()
-            age = self.page.get_text_from_element(CookiesLocators.AGE)
-            print(age)
-            age = int(age.replace('Age: ', ''))
-            languages = len(self.page.find_elements(CookiesLocators.LANGUAGES))
-            hackers.append({'age': age, 'languages': languages, 'value': cookie['value']})
-
-        sorted_dict = sorted(hackers, key=lambda x: x['age'])
-        youngest_hackers = [hacker for hacker in hackers if hacker['age'] == sorted_dict[0]['age']]
-        result_value = sorted(youngest_hackers, key=lambda x: x['languages'], reverse=True)[0]['value']
-
-        assert result_value == "ibyAZPfXAsPqptPaNyL"
+        result_value = self.page.find_youngest_hacker(cookies)
+        assert result_value == expected_value, f"Expected {expected_value}, but got {result_value}"

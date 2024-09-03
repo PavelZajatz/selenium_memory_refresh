@@ -1,28 +1,6 @@
 import pytest
-from selenium.webdriver.common.by import By
 
-from ..pages.windows_frames_prompts_page import WindowsFramesPromptsPage
-
-
-class WFPsPageLocators:
-    """
-    Locators and URLs used for testing windows and related elements on different pages.
-    """
-
-    URL_1 = "https://parsinger.ru/selenium/5.8/5/index.html"
-    URL_2 = "http://parsinger.ru/blank/3/index.html"
-    URL_3 = "http://parsinger.ru/window_size/2/index.html"
-    URL_4 = "https://parsinger.ru/selenium/5.8/3/index.html"
-    IFRAME = (By.XPATH, "//iframe[contains(@id, 'iframe')]")
-    PRESS_ME_BTN = (By.TAG_NAME, 'button')
-    IFRAME_TXT = (By.TAG_NAME, 'p')
-    INPUT = (By.XPATH, '//input[@id="guessInput"]')
-    INPUT_FLD = (By.TAG_NAME, 'input')
-    CHECK_BTN = (By.XPATH, '//button[@id="checkBtn"]')
-    RESULT = (By.ID, 'result')
-    WIDTH = (By.ID, 'width')
-    HEIGHT = (By.ID, 'height')
-    PINS = (By.XPATH, "//span[@class='pin']")
+from ..pages.windows_frames_prompts_page import WindowsFramesPromptsPage, WFPsPageLocators
 
 
 class TestWindowsFramesPromptsPage:
@@ -39,26 +17,22 @@ class TestWindowsFramesPromptsPage:
     def test_iframe(self):
         """
             Test method to interact with iframes on the page and retrieve a secret code.
-
-            Asserts:
-                - Asserts that the retrieved secret code is equal to `'FD79-32DJ-79XB-124S-P3DX-2456-DFB-DSA9'`.
-
-            Raises:
-                - AssertionError: If the retrieved secret code does not match the expected value.
             """
         self.page.open_url(WFPsPageLocators.URL_1)
 
-        for iframe in self.page.find_elements(WFPsPageLocators.IFRAME):
+        secret_code = None
+        for iframe in self.page.find_iframes():
             self.page.switch_to_iframe(iframe)
-            self.page.click(WFPsPageLocators.PRESS_ME_BTN)
-            pwd = self.page.get_text_from_element(WFPsPageLocators.IFRAME_TXT)
+            self.page.click_press_me_button()
+            pwd = self.page.get_password_from_iframe()
             self.page.switch_to_default_content()
-            self.page.enter_text(WFPsPageLocators.INPUT, pwd)
-            self.page.click(WFPsPageLocators.CHECK_BTN)
-            secret = self.page.try_to_get_text_from_alert()
-            if secret:
+            self.page.enter_password(pwd)
+            self.page.click_check_button()
+            secret_code = self.page.get_secret_from_alert()
+            if secret_code:
                 break
-        assert secret == 'FD79-32DJ-79XB-124S-P3DX-2456-DFB-DSA9'
+        assert secret_code == 'FD79-32DJ-79XB-124S-P3DX-2456-DFB-DSA9', \
+            f"Expected secret code be 'FD79-32DJ-79XB-124S-P3DX-2456-DFB-DSA9', but got {secret_code}"''
 
     def test_count_title_ints(self):
         """
@@ -73,23 +47,21 @@ class TestWindowsFramesPromptsPage:
            - Convert the window title to an integer and add it to the total sum.
            - Switch back to the original window.
         4. Verify that the total sum of integers from the window titles equals the expected value.
-
-        Asserts:
-            - Asserts that the total sum of integers from the window titles is equal to `77725787998028643152187739088279`.
-
-        Raises:
-            - AssertionError: If the total sum does not match the expected value.
         """
+        expected_total = 77725787998028643152187739088279
         total = 0
         self.page.open_url(WFPsPageLocators.URL_2)
-        buttons = self.page.find_elements(WFPsPageLocators.INPUT_FLD)
-        for button in buttons:
-            button.click()
-            self.page.switch_to_window(self.page.get_window_handles()[-1])
-            total += int(self.page.get_page_title())
-            self.page.switch_to_window(self.page.get_window_handles()[0])
+        buttons = self.page.find_buttons()
+        original_window_handle = self.page.get_current_window_handle()
 
-        assert total == 77725787998028643152187739088279
+        for button in buttons:
+            self.page.click_button(button)
+            new_window_handle = self.page.get_new_window_handle(original_window_handle)
+            self.page.switch_to_window(new_window_handle)
+            total += int(self.page.get_page_title())
+            self.page.switch_back_to_original_window(original_window_handle)
+
+        assert total == expected_total, f"Expected total: {expected_total}, but got: {total}"
 
     @pytest.mark.parametrize("x, y, expected_result",
                              [
@@ -115,15 +87,10 @@ class TestWindowsFramesPromptsPage:
         2. Retrieves inner and outer dimensions of the window.
         3. Calculates target dimensions to set the browser window size.
         4. Sets the window size and checks if the result text matches the expected value.
-
-        Args:
-            x (int): The width to test.
-            y (int): The height to test.
-            expected_result (str): The expected result text to be present in the element.
         """
         self.page.open_url(WFPsPageLocators.URL_3)
 
-        inner_width, inner_height = self.page.get_inner_size(WFPsPageLocators.WIDTH, WFPsPageLocators.HEIGHT)
+        inner_width, inner_height = self.page.get_inner_size()
         outer_width, outer_height = self.page.get_outer_size()
 
         target_width = outer_width - inner_width
@@ -131,14 +98,15 @@ class TestWindowsFramesPromptsPage:
 
         self.page.set_window_size(x + target_width, y + target_height)
 
-        result_text = self.page.wait_for_text_to_be_present_in_element(WFPsPageLocators.RESULT, expected_result)
-        assert result_text == expected_result
+        result_text = self.page.get_result_text(expected_result)
+        assert result_text == expected_result, f"Expected result: {expected_result}, but got: {result_text}"
 
     def test_find_correct_pin(self):
         """
         Tests the functionality of finding the correct PIN code on a webpage.
 
-        This method navigates to the specified URL, retrieves all possible PIN codes from the page, and iteratively attempts
+        This method navigates to the specified URL, retrieves all possible PIN codes from the page,
+        and iteratively attempts
         to input each PIN code into a prompt until the correct one is found. The test asserts that the correct PIN is
         identified by comparing the extracted secret code with the expected value.
 
@@ -157,7 +125,7 @@ class TestWindowsFramesPromptsPage:
             AssertionError: If the correct secret code is not found.
         """
         self.page.open_url(WFPsPageLocators.URL_4)
-        pins = self.page.find_elements(WFPsPageLocators.PINS)
+        """pins = self.page.find_elements(WFPsPageLocators.PINS)
         for pin in pins:
             pin_code = pin.text
             self.page.click(WFPsPageLocators.INPUT_FLD)
@@ -166,4 +134,7 @@ class TestWindowsFramesPromptsPage:
             if secret != 'Неверный пин-код':
                 break
 
-        assert secret == '1261851212132345456274632'
+        assert secret == '1261851212132345456274632'"""
+
+        secret = self.page.find_correct_pin()
+        assert secret == '1261851212132345456274632', "Failed to find the correct PIN code"

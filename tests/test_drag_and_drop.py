@@ -1,47 +1,6 @@
 import pytest
-from selenium.webdriver.common.by import By
 
-from ..pages.drag_and_drop_page import DragAndDropPage
-
-
-class DragAndDropLocators:
-    """Locators for Drag and Drop tests."""
-    URL_1 = "https://parsinger.ru/selenium/5.10/8/index.html"
-    URL_2 = "https://parsinger.ru/selenium/5.10/6/index.html"
-    URL_3 = "https://parsinger.ru/selenium/5.10/4/index.html"
-    URL_4 = "https://parsinger.ru/selenium/5.10/3/index.html"
-    URL_5 = "https://parsinger.ru/draganddrop/2/index.html"
-    URL_6 = "https://parsinger.ru/selenium/5.10/2/index.html"
-    URL_7 = "https://parsinger.ru/draganddrop/3/index.html"
-    URL_8 = "https://parsinger.ru/draganddrop/1/index.html"
-
-    PIECE = (By.CLASS_NAME, 'piece')
-    RANGE = (By.CLASS_NAME, 'range')
-    MESSAGE = (By.XPATH, '//*[@id="message"]|//*[@class="message"]')
-    P_TAG = (By.TAG_NAME, 'p')
-
-    SLIDERS_CONTAINER = (By.CLASS_NAME, 'slider-container')
-    CUR_POS_ELEMENT = (By.TAG_NAME, 'input')
-    NEW_POS = (By.CLASS_NAME, 'target-value')
-
-    BALL = (By.CLASS_NAME, 'ball_color')
-    BASKET = (By.CLASS_NAME, 'basket_color')
-
-    DRAGGABLE = (By.CLASS_NAME, 'draganddrop')
-    DROPPABLE = (By.CLASS_NAME, 'draganddrop_end')
-
-    SQUARE = (By.ID, 'draggable')
-    DROP_ZONE = (By.CSS_SELECTOR, 'div.box')
-
-    GREEN_SQUARE = (By.CSS_SELECTOR, 'div.draganddrop')
-    DROP_ZONE_SINGLE = (By.CLASS_NAME, 'draganddrop_end')
-
-    VIRTUAL_DRAGGABLE = (By.CLASS_NAME, 'ui-draggable')
-    CONTROL_POINTS = (By.CSS_SELECTOR, 'div.controlPoint')
-
-    RED_BLOCK = (By.ID, "draggable")
-    TARGET_ZONE = (By.ID, "field2")
-    RESULT = (By.ID, 'result')
+from ..pages.drag_and_drop_page import DragAndDropPage, DragAndDropLocators
 
 
 class TestDragAndDrop:
@@ -69,15 +28,14 @@ class TestDragAndDrop:
 
         The test is considered successful if the expected message is displayed.
         """
+        expected_result = 'GD60-34JX-354F-3HJC-NXC0-54KO-W3B1-2DFH-23JG'
         self.page.open_url(DragAndDropLocators.URL_1)
-        pieces = self.page.find_elements(DragAndDropLocators.PIECE)
-        ranges = self.page.find_elements(DragAndDropLocators.RANGE)
 
-        self.page.drag_pieces_to_ranges(pieces, ranges, DragAndDropLocators.P_TAG)
+        pieces, ranges = self.page.locate_pieces_and_ranges()
+        self.page.drag_pieces_to_ranges_with_target(pieces, ranges)
+        message_displayed = self.page.verify_success_message(expected_result)
 
-        message = self.page.wait_for_text_to_be_present_in_element(DragAndDropLocators.MESSAGE,
-                                                                   'GD60-34JX-354F-3HJC-NXC0-54KO-W3B1-2DFH-23JG')
-        assert message
+        assert message_displayed
 
     def test_sliders_movement(self):
         """
@@ -91,13 +49,11 @@ class TestDragAndDrop:
         5. Verify that the displayed message matches the expected secret code.
         """
         self.page.open_url(DragAndDropLocators.URL_2)
-        sliders = self.page.find_elements(DragAndDropLocators.SLIDERS_CONTAINER)
-        self.page.move_sliders_to_position(sliders,
-                                           DragAndDropLocators.CUR_POS_ELEMENT,
-                                           DragAndDropLocators.NEW_POS)
+        sliders = self.page.locate_sliders()
+        self.page.move_sliders_to_target_positions(sliders)
+        message = self.page.get_final_message()
 
-        message = self.page.wait_for_element_to_be_present(DragAndDropLocators.MESSAGE)
-        assert message.text == '3F9D-DVB0-EH46-96VB-JHJ5-34UK-2SSF-JKG0'
+        assert message == '3F9D-DVB0-EH46-96VB-JHJ5-34UK-2SSF-JKG0'
 
     def test_balls_auto_sort(self):
         """
@@ -112,11 +68,12 @@ class TestDragAndDrop:
         correctly sorted.
         """
         self.page.open_url(DragAndDropLocators.URL_3)
-        balls = self.page.find_elements(DragAndDropLocators.BALL)
-        baskets = self.page.find_elements(DragAndDropLocators.BASKET)
+        balls = self.page.locate_balls()
+        baskets = self.page.locate_baskets()
         self.page.drag_and_drop_with_color_matching(balls, baskets)
+        message = self.page.get_final_message()
 
-        assert self.page.find_element(DragAndDropLocators.MESSAGE).text == 'ER96-SVN0-34HX-ER3W-WHJ5-WHG4-SNJ1-12LO'
+        assert message == 'ER96-SVN0-34HX-ER3W-WHJ5-WHG4-SNJ1-12LO'
 
     def test_find_pairs(self):
         """
@@ -132,11 +89,12 @@ class TestDragAndDrop:
         5. Assert the message displayed on the page after all pairs are matched.
         """
         self.page.open_url(DragAndDropLocators.URL_4)
-        draggables = self.page.find_elements(DragAndDropLocators.DRAGGABLE)
-        droppables = self.page.find_elements(DragAndDropLocators.DROPPABLE)
+        draggables = self.page.locate_draggables()
+        droppables = self.page.locate_droppables()
         self.page.drag_and_drop_with_color_matching(draggables, droppables, 'border-color')
+        message = self.page.get_final_message()
 
-        assert self.page.find_element(DragAndDropLocators.MESSAGE).text == 'F934-3902-2FH4-DV02-3454-9HCX-4F53-12FS'
+        assert message == 'F934-3902-2FH4-DV02-3454-9HCX-4F53-12FS'
 
     def test_square_journey(self):
         """
@@ -149,13 +107,13 @@ class TestDragAndDrop:
         4. Asserts that the expected success message appears on the page after completing the journey.
         """
         self.page.open_url(DragAndDropLocators.URL_5)
-        draggable = self.page.find_element(DragAndDropLocators.SQUARE)
-        drop_zones = self.page.find_elements(DragAndDropLocators.DROP_ZONE)
+        draggable_square = self.page.locate_draggable_square()
+        drop_zones = self.page.locate_drop_zones()
+        self.page.drag_square_through_zones(draggable_square, drop_zones)
+        message = self.page.get_final_message()
 
-        for drop in drop_zones:
-            self.page.drag_and_drop(draggable, drop)
-
-        assert self.page.find_element(DragAndDropLocators.MESSAGE).text == 'NS4zNDUzMzU0NTQ2MzU0NDVlKzIx'
+        assert message == 'NS4zNDUzMzU0NTQ2MzU0NDVlKzIx', \
+            f"Expected message to be 'NS4zNDUzMzU0NTQ2MzU0NDVlKzIx', but got '{message}'"
 
     def test_movements_of_green_squares(self):
         """
@@ -168,13 +126,13 @@ class TestDragAndDrop:
         4. Asserts that the expected success message appears on the page after all squares are moved.
         """
         self.page.open_url(DragAndDropLocators.URL_6)
-        green_squares = self.page.find_elements(DragAndDropLocators.GREEN_SQUARE)
-        drop_zone = self.page.find_element(DragAndDropLocators.DROP_ZONE_SINGLE)
+        green_squares = self.page.locate_green_squares()
+        drop_zone = self.page.locate_single_drop_zone()
+        self.page.drag_squares_to_drop_zone(green_squares, drop_zone)
+        message = self.page.get_final_message()
 
-        for square in green_squares:
-            self.page.drag_and_drop(square, drop_zone)
-
-        assert self.page.find_element(DragAndDropLocators.MESSAGE).text == '39FG-3490-34F0-944S-34FV-80VX-F3GJ-349B'
+        assert message == '39FG-3490-34F0-944S-34FV-80VX-F3GJ-349B', \
+            f"Expected message to be '39FG-3490-34F0-944S-34FV-80VX-F3GJ-349B', but got '{message}'"
 
     def test_open_virtual_space(self):
         """
@@ -188,15 +146,13 @@ class TestDragAndDrop:
         4. Asserts that the expected success message appears on the page after the virtual space is fully explored.
         """
         self.page.open_url(DragAndDropLocators.URL_7)
-        draggable = self.page.wait_for_element_to_be_visible(DragAndDropLocators.VIRTUAL_DRAGGABLE)
-        self.page.action.click_and_hold(draggable).perform()
+        draggable = self.page.get_draggable_element()
+        control_points = self.page.get_control_points()
+        self.page.drag_through_control_points(draggable, control_points)
+        message = self.page.get_final_message()
 
-        control_points = self.page.find_elements(DragAndDropLocators.CONTROL_POINTS)
-        for point in control_points:
-            self.page.action.move_to_element(point).perform()
-        self.page.action.move_to_element(control_points[0]).release().perform()
-
-        assert self.page.find_element(DragAndDropLocators.MESSAGE).text == 'Ni44NTc4MTk2NzY4NTQ0NTZlKzIz'
+        assert message == 'Ni44NTc4MTk2NzY4NTQ0NTZlKzIz', \
+            f"Expected message to be 'Ni44NTc4MTk2NzY4NTQ0NTZlKzIz', but got '{message}'"
 
     def test_red_block_moves(self):
         """
@@ -209,9 +165,10 @@ class TestDragAndDrop:
         4. Asserts that the expected result message appears on the page after completing the drag-and-drop action.
         """
         self.page.open_url(DragAndDropLocators.URL_8)
-        red_block = self.page.wait_for_element_to_be_visible(DragAndDropLocators.RED_BLOCK)
-        target_zone = self.page.find_element(DragAndDropLocators.TARGET_ZONE)
+        red_block = self.page.get_red_block()
+        target_zone = self.page.get_target_zone()
+        self.page.drag_red_block_to_target(red_block, target_zone)
+        message = self.page.get_final_message()
 
-        self.page.drag_and_drop(red_block, target_zone)
-
-        assert self.page.find_element(DragAndDropLocators.RESULT).text == 'ODYzNDQ1MzM0NTE0MzQ2OTAwMA=='
+        assert message == 'ODYzNDQ1MzM0NTE0MzQ2OTAwMA==', \
+            f"Expected message to be 'ODYzNDQ1MzM0NTE0MzQ2OTAwMA==', but got '{message}'"
