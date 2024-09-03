@@ -21,13 +21,14 @@ class TestScrolling:
         The process continues until 99 div elements have been loaded, after which the test asserts that the
         correct alert text is displayed.
         """
+        expected = '5402f04236450f263540jk406504l506'
         self.page.open_url(ScrollingLocators.URL_1)
         checkbox_rows = self.page.find_all_loaded_divs()
         self.page.scroll_and_click_even_checkboxes(checkbox_rows, 99)
         self.page.click_alert_btn()
         alert_text = self.page.get_alert_text()
 
-        assert alert_text == '5402f04236450f263540jk406504l506'
+        assert alert_text == expected, f"Should be - {expected}, got - {alert_text}"
 
     @pytest.mark.skip
     def test_collect_and_sum(self):
@@ -37,10 +38,11 @@ class TestScrolling:
         It collects all spans in each container, sums their text values, and asserts that the final sum matches
         the expected value.
         """
+        expected = 159858750
         self.page.open_url(ScrollingLocators.URL_2)
         total_sum = self.page.scroll_all_scrollbars_and_sum_numbers()
 
-        assert total_sum == 159858750
+        assert total_sum == expected, f"Should be - {expected}, got - {total_sum}"
 
     @pytest.mark.flaky(retries=2)
     def test_collect_and_sum_spans_v2(self):
@@ -49,8 +51,9 @@ class TestScrolling:
         This test navigates to a specific URL, collects all paragraph spans inside a scrollable container,
         sums their text values, and asserts the total sum.
         """
+        expected = 499917600
         self.page.open_url(ScrollingLocators.URL_3)
         spans = self.page.collect_all_paragraphs()
         total_sum = self.page.sum_span_text_in_scrollbox(spans)
 
-        assert total_sum == 499917600
+        assert total_sum == 499917600, f"Should be - {expected}, got - {total_sum}"

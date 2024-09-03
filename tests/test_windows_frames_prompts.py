@@ -125,16 +125,6 @@ class TestWindowsFramesPromptsPage:
             AssertionError: If the correct secret code is not found.
         """
         self.page.open_url(WFPsPageLocators.URL_4)
-        """pins = self.page.find_elements(WFPsPageLocators.PINS)
-        for pin in pins:
-            pin_code = pin.text
-            self.page.click(WFPsPageLocators.INPUT_FLD)
-            self.page.switch_to_alert_and_send_keys(pin_code)
-            secret = self.page.get_text_from_element(WFPsPageLocators.RESULT)
-            if secret != 'Неверный пин-код':
-                break
-
-        assert secret == '1261851212132345456274632'"""
-
         secret = self.page.find_correct_pin()
-        assert secret == '1261851212132345456274632', "Failed to find the correct PIN code"
+
+        assert secret == '1261851212132345456274632', f"Failed to find the correct PIN code, found - {secret}"

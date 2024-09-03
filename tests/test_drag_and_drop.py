@@ -35,7 +35,7 @@ class TestDragAndDrop:
         self.page.drag_pieces_to_ranges_with_target(pieces, ranges)
         message_displayed = self.page.verify_success_message(expected_result)
 
-        assert message_displayed
+        assert message_displayed, f" Message '{expected_result}' is not shown"
 
     def test_sliders_movement(self):
         """
@@ -48,12 +48,14 @@ class TestDragAndDrop:
         4. Trigger the necessary events to ensure the position is updated.
         5. Verify that the displayed message matches the expected secret code.
         """
+        expected = '3F9D-DVB0-EH46-96VB-JHJ5-34UK-2SSF-JKG0'
         self.page.open_url(DragAndDropLocators.URL_2)
         sliders = self.page.locate_sliders()
         self.page.move_sliders_to_target_positions(sliders)
         message = self.page.get_final_message()
 
-        assert message == '3F9D-DVB0-EH46-96VB-JHJ5-34UK-2SSF-JKG0'
+        assert message == expected, \
+            f"Expected message to be {expected}, but got '{message}'"
 
     def test_balls_auto_sort(self):
         """
@@ -67,13 +69,15 @@ class TestDragAndDrop:
         5. Asserts that a message indicating success appears on the page, verifying that all balls were
         correctly sorted.
         """
+        expected = 'ER96-SVN0-34HX-ER3W-WHJ5-WHG4-SNJ1-12LO'
         self.page.open_url(DragAndDropLocators.URL_3)
         balls = self.page.locate_balls()
         baskets = self.page.locate_baskets()
         self.page.drag_and_drop_with_color_matching(balls, baskets)
         message = self.page.get_final_message()
 
-        assert message == 'ER96-SVN0-34HX-ER3W-WHJ5-WHG4-SNJ1-12LO'
+        assert message == expected, \
+            f"Expected message to be {expected}, but got '{message}'"
 
     def test_find_pairs(self):
         """
@@ -88,13 +92,15 @@ class TestDragAndDrop:
         a drag-and-drop operation.
         5. Assert the message displayed on the page after all pairs are matched.
         """
+        expected = 'F934-3902-2FH4-DV02-3454-9HCX-4F53-12FS'
         self.page.open_url(DragAndDropLocators.URL_4)
         draggables = self.page.locate_draggables()
         droppables = self.page.locate_droppables()
         self.page.drag_and_drop_with_color_matching(draggables, droppables, 'border-color')
         message = self.page.get_final_message()
 
-        assert message == 'F934-3902-2FH4-DV02-3454-9HCX-4F53-12FS'
+        assert message == expected, \
+            f"Expected message to be {expected}, but got '{message}'"
 
     def test_square_journey(self):
         """
@@ -106,14 +112,15 @@ class TestDragAndDrop:
         3. Drags and drops the square into each of the drop zones sequentially.
         4. Asserts that the expected success message appears on the page after completing the journey.
         """
+        expected = 'NS4zNDUzMzU0NTQ2MzU0NDVlKzIx'
         self.page.open_url(DragAndDropLocators.URL_5)
         draggable_square = self.page.locate_draggable_square()
         drop_zones = self.page.locate_drop_zones()
         self.page.drag_square_through_zones(draggable_square, drop_zones)
         message = self.page.get_final_message()
 
-        assert message == 'NS4zNDUzMzU0NTQ2MzU0NDVlKzIx', \
-            f"Expected message to be 'NS4zNDUzMzU0NTQ2MzU0NDVlKzIx', but got '{message}'"
+        assert message == expected, \
+            f"Expected message to be {expected}, but got '{message}'"
 
     def test_movements_of_green_squares(self):
         """
@@ -125,14 +132,15 @@ class TestDragAndDrop:
         3. Drags and drops each green square into the drop zone.
         4. Asserts that the expected success message appears on the page after all squares are moved.
         """
+        expected = '39FG-3490-34F0-944S-34FV-80VX-F3GJ-349B'
         self.page.open_url(DragAndDropLocators.URL_6)
         green_squares = self.page.locate_green_squares()
         drop_zone = self.page.locate_single_drop_zone()
         self.page.drag_squares_to_drop_zone(green_squares, drop_zone)
         message = self.page.get_final_message()
 
-        assert message == '39FG-3490-34F0-944S-34FV-80VX-F3GJ-349B', \
-            f"Expected message to be '39FG-3490-34F0-944S-34FV-80VX-F3GJ-349B', but got '{message}'"
+        assert message == expected, \
+            f"Expected message to be {expected}, but got '{message}'"
 
     def test_open_virtual_space(self):
         """
@@ -145,14 +153,15 @@ class TestDragAndDrop:
         3. Moves the draggable element sequentially over each control point, returning to the first control point.
         4. Asserts that the expected success message appears on the page after the virtual space is fully explored.
         """
+        expected = 'Ni44NTc4MTk2NzY4NTQ0NTZlKzIz'
         self.page.open_url(DragAndDropLocators.URL_7)
         draggable = self.page.get_draggable_element()
         control_points = self.page.get_control_points()
         self.page.drag_through_control_points(draggable, control_points)
         message = self.page.get_final_message()
 
-        assert message == 'Ni44NTc4MTk2NzY4NTQ0NTZlKzIz', \
-            f"Expected message to be 'Ni44NTc4MTk2NzY4NTQ0NTZlKzIz', but got '{message}'"
+        assert message == expected, \
+            f"Expected message to be {expected}, but got '{message}'"
 
     def test_red_block_moves(self):
         """
@@ -164,11 +173,12 @@ class TestDragAndDrop:
         3. Drags and drops the red block into the target drop zone.
         4. Asserts that the expected result message appears on the page after completing the drag-and-drop action.
         """
+        expected = 'ODYzNDQ1MzM0NTE0MzQ2OTAwMA=='
         self.page.open_url(DragAndDropLocators.URL_8)
         red_block = self.page.get_red_block()
         target_zone = self.page.get_target_zone()
         self.page.drag_red_block_to_target(red_block, target_zone)
         message = self.page.get_final_message()
 
-        assert message == 'ODYzNDQ1MzM0NTE0MzQ2OTAwMA==', \
-            f"Expected message to be 'ODYzNDQ1MzM0NTE0MzQ2OTAwMA==', but got '{message}'"
+        assert message == expected, \
+            f"Expected message to be {expected}, but got '{message}'"

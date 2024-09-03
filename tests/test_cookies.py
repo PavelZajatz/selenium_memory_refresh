@@ -28,13 +28,11 @@ class TestCookies:
         3. Filter cookies based on whether their names end with an even number.
         4. Sum the values of the filtered cookies.
         5. Assert that the total sum matches the expected value.
-
-        Raises:
-            AssertionError: If the total sum does not match the expected value.
         """
+        expected = 1962101
         self.page.open_url(CookiesLocators.URL_1)
         total = self.page.sum_even_cookies()
-        assert total == 1962101, f"Expected cookie sum to be 1962101, but got {total}"
+        assert total == expected, f"Expected cookie sum to be {expected}, but got {total}"
 
     def test_max_expiry_cookie(self):
         """
@@ -50,18 +48,16 @@ class TestCookies:
         3. Visit each URL to find the cookie with the maximum expiry value.
         4. Navigate to the URL with the maximum expiry cookie and retrieve the text from the 'result' element.
         5. Assert that the retrieved text matches the expected value.
-
-        Raises:
-            AssertionError: If the retrieved text does not match the expected value.
         """
+        expected = '563244506345412334251234560541'
         self.page.open_url(CookiesLocators.URL_2)
         urls = self.page.get_all_urls()
         max_expiry_link = self.page.find_max_expiry_url(urls)
         self.page.open_url(max_expiry_link)
         result_text = self.page.retrieve_result_text()
 
-        assert result_text == '563244506345412334251234560541', \
-            f"Expected result text to be '563244506345412334251234560541', but got '{result_text}'"
+        assert result_text == expected, \
+            f"Expected result text to be '{expected}', but got '{result_text}'"
 
     def test_sum_secret_cookies(self):
         """
@@ -77,14 +73,12 @@ class TestCookies:
         3. Filter cookies that contain 'secret_cookie_' in their names.
         4. Sum the values of the filtered cookies.
         5. Assert that the total sum matches the expected value.
-
-        Raises:
-            AssertionError: If the total sum does not match the expected value.
         """
+        expected = '4901217'
         self.page.open_url(CookiesLocators.URL_1)
         total = self.page.sum_secret_cookies()
 
-        assert total == 4901217, f"Expected secret cookie sum to be 4901217, but got {total}"
+        assert total == expected, f"Expected secret cookie sum to be '{expected}, but got {total}"
 
     @pytest.mark.parametrize("cookies", [
         [{'name': 'KXIYO4xMrWh', 'value': 'ibyAZPfXAsPqptPaNyL'},
@@ -195,8 +189,6 @@ class TestCookies:
         The test adds each cookie one by one, refreshes the page, and retrieves the age and number
         of languages listed. It then identifies the youngest hacker with the most languages and
         prints the corresponding cookie value.
-
-        AssertionError: If the value does not match the expected value.
         """
         expected_value = "ibyAZPfXAsPqptPaNyL"
 
